@@ -1,0 +1,555 @@
+@import "tailwindcss";
+
+/* ─── Design tokens ───────────────────────────────────────────────────────── */
+
+:root {
+  /* Neutral ink scale — ink-0 = near-white, ink-4 = near-black */
+  --ink-0: oklch(97% 0.005 255);
+  --ink-1: oklch(74% 0.010 255);
+  --ink-2: oklch(50% 0.010 255);
+  --ink-3: oklch(28% 0.010 255);
+  --ink-4: oklch(11% 0.010 255);
+
+  /* Accent — cool blue-violet */
+  --accent: oklch(64% 0.20 265);
+  --accent-dim: oklch(64% 0.20 265 / 0.15);
+
+  /* Semantic */
+  --ok:     oklch(64% 0.18 145);
+  --warn:   oklch(76% 0.17 78);
+  --danger: oklch(60% 0.22 25);
+
+  /* ── Dashboard glass tokens ── */
+  --glass:       oklch(0.15 0.018 255 / 0.55);
+  --ui-border:   oklch(1 0 0 / 0.09);
+  --shadow-card: 0 8px 32px oklch(0 0 0 / 0.48),
+                 0 2px 8px  oklch(0 0 0 / 0.32),
+                 inset 0 1px 0 oklch(1 0 0 / 0.11);
+
+  /* Dashboard text levels */
+  --t1: oklch(0.93 0.01 255);
+  --t2: oklch(0.60 0.02 255);
+  --t3: oklch(0.38 0.015 255);
+
+  /* Dashboard accents */
+  --ac:  oklch(0.67 0.19 240); /* blue   */
+  --acy: oklch(0.67 0.19 200); /* cyan   */
+  --ag:  oklch(0.67 0.19 165); /* mint   */
+
+  /* Retro phosphor accent — CRM agent feed + data readouts ONLY. Do not use
+     elsewhere; the rest of the app stays on the clean oklch glass system. */
+  --retro-amber: oklch(0.78 0.16 75);
+
+  --r: 14px;
+
+  /* Side gutter for the page and the full-bleed TopRail (which cancels it
+     with a matching negative margin). */
+  --gutter: 22px;
+}
+
+@media (max-width: 767px) { :root { --gutter: 12px; } }
+
+/* ─── Sizing model ────────────────────────────────────────────────────────────
+   The app does NOT scale itself. An earlier `--app-zoom` wrapper zoomed the
+   whole UI per viewport-width/height tier, which stacked on top of Windows
+   display scaling and browser zoom (both already change the CSS viewport
+   width), so a 150%-scaled laptop and a 100% monitor landed on near-identical
+   zoomed-in tiers, and phones got shrunk to ~0.73x. Now:
+     - Text is one fixed size (nothing below 10.5px). How big it looks on a
+       given screen is the OS display-scaling setting for that monitor, or
+       browser zoom (Ctrl +/-) — the same knobs every other site uses.
+     - Layout is fluid: columns share the available width with minmax()
+       and change column COUNT at breakpoints (the .layout-* classes below),
+       instead of fixed-px columns that overflow or leave dead space. */
+
+/* ─── Tailwind v4 theme registration ─────────────────────────────────────── */
+
+@theme inline {
+  --color-ink-0:      var(--ink-0);
+  --color-ink-1:      var(--ink-1);
+  --color-ink-2:      var(--ink-2);
+  --color-ink-3:      var(--ink-3);
+  --color-ink-4:      var(--ink-4);
+  --color-accent:     var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-ok:         var(--ok);
+  --color-warn:       var(--warn);
+  --color-danger:     var(--danger);
+
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+/* ─── Base styles — dark by default ──────────────────────────────────────── */
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--ink-4);
+  color: var(--t1);
+  font-family: var(--font-space-grotesk, 'Space Grotesk', ui-sans-serif, system-ui, sans-serif);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: oklch(1 0 0 / 0.12); border-radius: 2px; }
+button { font-family: inherit; }
+
+/* ─── Responsive layouts ──────────────────────────────────────────────────────
+   Three widths: phone (<768px, one column), tablet / split window
+   (768-1279px), desktop (>=1280px). Columns are minmax() tracks so they
+   share whatever width exists rather than being fixed px. */
+
+/* Home: [left stack | main], main = session over [center | right].
+   On phones the wrappers dissolve (display: contents) so the cards reorder
+   into one column with the capture bar first. */
+.home-grid { display: grid; gap: 15px; align-items: start; grid-template-columns: minmax(0, 1fr); }
+.home-main, .home-sub { display: contents; }
+.home-left, .home-center, .home-right { display: flex; flex-direction: column; gap: 15px; min-width: 0; }
+.home-session { order: 0; }
+.home-left    { order: 1; }
+.home-center  { order: 2; }
+.home-right   { order: 3; }
+
+@media (min-width: 768px) {
+  .home-grid { grid-template-columns: minmax(280px, 1fr) minmax(0, 1.7fr); }
+  .home-main { display: flex; flex-direction: column; gap: 15px; min-width: 0; }
+  .home-sub  { display: grid; gap: 15px; align-items: start; grid-template-columns: minmax(0, 1fr); }
+  .home-session, .home-left, .home-center, .home-right { order: 0; }
+}
+@media (min-width: 1280px) {
+  .home-grid { grid-template-columns: minmax(300px, 1fr) minmax(0, 3fr); }
+  .home-sub  { grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr); }
+}
+
+/* Main content + right rail (Control Room tabs). */
+.layout-rail { display: grid; gap: 15px; align-items: start; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1100px) {
+  .layout-rail { grid-template-columns: minmax(0, 1fr) clamp(300px, 25%, 460px); }
+}
+
+/* Two equal columns, stacked below 900px. */
+.layout-2 { display: grid; gap: 15px; align-items: start; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .layout-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Wide + narrow pair, stacked below 1100px. */
+.layout-split { display: grid; gap: 15px; align-items: start; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1100px) { .layout-split { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); } }
+
+/* Automations "most manual steps" row: name | step bar | note. */
+.layout-cap-row { display: grid; gap: 8px 14px; align-items: center; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .layout-cap-row { grid-template-columns: 190px minmax(0, 1fr) 300px; } }
+
+/* Control Room summary strip: fixed-width segments in one row only when
+   there's room; otherwise a wrapping grid with the dividers hidden and the
+   step-mix bar + search spanning the full width. */
+.cr-summary { display: grid; gap: 12px 18px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.cr-summary > * { min-width: 0; }
+.cr-summary-divider { display: none; }
+.cr-summary-wide { grid-column: 1 / -1; }
+@media (min-width: 1400px) {
+  .cr-summary { display: flex; align-items: stretch; gap: 0; }
+  .cr-summary > * { min-width: revert; }
+  .cr-summary-divider { display: block; }
+}
+
+/* Card grids: as many columns as fit at the given minimum width. */
+.layout-tiles    { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.layout-tiles-sm { display: grid; gap: 8px;  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); }
+
+/* ─── Task row actions ────────────────────────────────────────────────────────
+   Secondary row buttons (edit, wait, block type, delete) appear on hover
+   only; the focus button stays visible. With a mouse they overlay the end
+   of the title instead of reserving width, so titles don't reflow on hover.
+   Touch screens have no hover, so there they sit on their own line under
+   the title. */
+.task-row { position: relative; }
+.task-row-tail { display: flex; align-items: center; gap: 4px; flex-shrink: 0; position: relative; }
+.task-row-actions { display: flex; align-items: center; gap: 4px; }
+
+@media (hover: hover) {
+  .task-row-actions {
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    padding-left: 22px;
+    padding-right: 4px;
+    white-space: nowrap;
+    background: linear-gradient(to right, transparent, var(--row-bg, oklch(0.15 0.02 255)) 20px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease;
+  }
+  .task-row:hover .task-row-actions,
+  .task-row:focus-within .task-row-actions,
+  .task-row-actions.is-open { opacity: 1; pointer-events: auto; }
+}
+@media (hover: none) {
+  .task-row { flex-wrap: wrap; }
+  .task-row-tail { flex-basis: 100%; justify-content: flex-end; }
+}
+
+/* ─── Dashboard component classes ────────────────────────────────────────── */
+
+@layer components {
+  /* Glass card base */
+  .glass {
+    background: var(--glass);
+    border: 1px solid var(--ui-border);
+    border-radius: var(--r);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Gradient accent: fades from --acy (mint) to transparent on top edge */
+  .accent-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--r);
+    padding: 2px;
+    background: linear-gradient(to bottom, var(--acy), transparent 55%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+                  linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Card header row */
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 13px 4px;
+    border-bottom: 1px solid oklch(1 0 0 / 0.055);
+    flex-shrink: 0;
+  }
+
+  /* Micro uppercase label */
+  .card-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--t3);
+  }
+
+  /* Mono badge pill */
+  .card-badge {
+    font-family: var(--font-jetbrains-mono, monospace);
+    font-size: 10.5px;
+    padding: 1px 6px;
+    border-radius: 20px;
+    background: oklch(1 0 0 / 0.05);
+    border: 1px solid oklch(1 0 0 / 0.08);
+    color: var(--t3);
+  }
+
+  /* Card body */
+  .card-body {
+    padding: 13px 15px;
+    flex: 1;
+  }
+
+  /* Pulsing "live" badge */
+  @keyframes pulse-badge {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.55; }
+  }
+  .badge-live {
+    animation: pulse-badge 2s ease-in-out infinite;
+    background: oklch(0.67 0.19 165 / 0.12) !important;
+    border-color: oklch(0.67 0.19 165 / 0.28) !important;
+    color: var(--acy) !important;
+  }
+
+  /* ── Retro phosphor accent layer ──────────────────────────────────────────
+     Confined to the CRM Live Agent Feed + data readouts (cost numerals, metric
+     values, status words). Restrained accent, not a full re-skin — never
+     applied to body text, large text blocks, or dense tables. Single warm
+     accent color (amber). */
+
+  /* Scanline texture — low-intensity, applied as an overlay layer */
+  .retro-scanlines {
+    position: relative;
+  }
+  .retro-scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      oklch(1 0 0 / 0.05) 0px,
+      oklch(1 0 0 / 0.05) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+    background-size: 100% 4px;
+    opacity: 0.22;
+    z-index: 1;
+  }
+
+  /* Layered phosphor text-glow — accent numerals/status words ONLY */
+  .retro-glow {
+    color: var(--retro-amber);
+    text-shadow:
+      0 0 2px  oklch(0.78 0.16 75 / 0.55),
+      0 0 6px  oklch(0.78 0.16 75 / 0.35),
+      0 0 14px oklch(0.78 0.16 75 / 0.18);
+  }
+
+  /* Subtle flicker — confined to 0.97–1.0 opacity, ~150ms cycle */
+  @keyframes retro-flicker {
+    0%   { opacity: 1; }
+    50%  { opacity: 0.97; }
+    100% { opacity: 1; }
+  }
+  .retro-flicker {
+    animation: retro-flicker 150ms steps(2, end) infinite;
+  }
+
+  /* Hard block cursor — 1s step-end blink, marks the feed head */
+  @keyframes retro-cursor-blink {
+    0%, 49%  { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+  .retro-cursor::after {
+    content: '\2588'; /* full block */
+    display: inline-block;
+    margin-left: 2px;
+    color: var(--retro-amber);
+    animation: retro-cursor-blink 1s steps(1, end) infinite;
+  }
+
+  /* Staggered line-by-line reveal — "system initializing" feel on load */
+  @keyframes retro-reveal {
+    from { opacity: 0; transform: translateY(-2px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .retro-reveal {
+    animation: retro-reveal 220ms ease-out both;
+  }
+
+  /* Mono data register base — JetBrains Mono, used for all retro terminal text */
+  .retro-mono {
+    font-family: var(--font-jetbrains-mono, monospace);
+  }
+}
+
+/* ─── Demo shell ──────────────────────────────────────────────────────────────
+   Everything below exists only in this demo build: the banner that says the data
+   is sample data, the per-tab guide, and the simulated Telegram replies. */
+
+:root { --demo-banner-h: 34px; }
+
+.demo-banner {
+  position: relative;
+  z-index: 60;
+  min-height: var(--demo-banner-h);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 calc(var(--gutter) + 2px);
+  font-size: 11.5px;
+  color: var(--t2);
+  background: oklch(0.78 0.16 75 / 0.09);
+  border-bottom: 1px solid oklch(0.78 0.16 75 / 0.28);
+}
+.demo-pill {
+  font-family: var(--font-jetbrains-mono, monospace);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 1px 7px;
+  border-radius: 20px;
+  color: var(--retro-amber);
+  background: oklch(0.78 0.16 75 / 0.14);
+  border: 1px solid oklch(0.78 0.16 75 / 0.38);
+  flex-shrink: 0;
+}
+.demo-banner-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.demo-banner-btn {
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 2px 9px;
+  border-radius: 6px;
+  color: var(--t1);
+  background: oklch(1 0 0 / 0.06);
+  border: 1px solid oklch(1 0 0 / 0.12);
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.demo-banner-btn:hover { background: oklch(1 0 0 / 0.11); }
+@media (max-width: 767px) { .demo-banner-text { display: none; } }
+
+.tab-guide {
+  margin-top: 14px;
+  padding: 11px 15px 12px;
+  border-radius: var(--r);
+  border: 1px solid oklch(0.67 0.19 200 / 0.26);
+  border-left: 3px solid var(--acy);
+  background: oklch(0.67 0.19 200 / 0.055);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex-shrink: 0;
+}
+.tab-guide-head { display: flex; align-items: baseline; gap: 10px; }
+.tab-guide-kicker {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--acy);
+}
+.tab-guide-title { font-size: 13.5px; font-weight: 600; color: var(--t1); }
+.tab-guide-hide {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--t2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 2px;
+}
+.tab-guide-hide:hover { color: var(--t1); }
+.tab-guide-body { font-size: 12.5px; line-height: 1.6; color: oklch(0.78 0.015 255); max-width: 1180px; }
+.tab-guide-section { font-weight: 600; color: var(--t1); }
+.tab-guide-try { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.tab-guide-try-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--t2);
+  margin-right: 2px;
+}
+.tab-guide-chip {
+  font-size: 11px;
+  line-height: 1.35;
+  padding: 2px 9px;
+  border-radius: 20px;
+  color: oklch(0.82 0.015 255);
+  background: oklch(1 0 0 / 0.05);
+  border: 1px solid oklch(1 0 0 / 0.1);
+}
+.tab-guide-collapsed {
+  margin-top: 14px;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  padding: 4px 11px;
+  border-radius: 20px;
+  color: var(--t2);
+  background: oklch(0.67 0.19 200 / 0.055);
+  border: 1px solid oklch(0.67 0.19 200 / 0.26);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.demo-toasts {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: min(360px, calc(100vw - 36px));
+  pointer-events: none;
+}
+.demo-toast {
+  pointer-events: auto;
+  cursor: pointer;
+  padding: 10px 13px 11px;
+  border-radius: 12px;
+  background: oklch(0.17 0.03 240 / 0.97);
+  border: 1px solid oklch(0.67 0.19 240 / 0.45);
+  box-shadow: 0 10px 34px oklch(0 0 0 / 0.55);
+  animation: retro-reveal 220ms ease-out both;
+}
+.demo-toast-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 10.5px;
+  color: var(--t2);
+  margin-bottom: 4px;
+}
+.demo-toast-from { font-weight: 600; font-size: 12px; color: var(--ac); }
+.demo-toast-text { font-size: 12.5px; line-height: 1.5; color: var(--t1); white-space: pre-wrap; word-break: break-word; }
+
+/* The inline keyboard under a simulated bot message. */
+.demo-reply-buttons { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; cursor: default; }
+.demo-reply-button {
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1.4;
+  padding: 3px 10px;
+  border-radius: 7px;
+  color: var(--t1);
+  background: oklch(0.67 0.19 240 / 0.2);
+  border: 1px solid oklch(0.67 0.19 240 / 0.5);
+  cursor: pointer;
+}
+.demo-reply-button:hover { background: oklch(0.67 0.19 240 / 0.32); }
+.demo-reply-button-static,
+.demo-reply-button-static:hover {
+  color: var(--t2);
+  background: oklch(1 0 0 / 0.05);
+  border: 1px dashed oklch(1 0 0 / 0.18);
+  cursor: help;
+}
+
+/* Login screen */
+.login-hint {
+  width: 100%;
+  max-width: 24rem;
+  margin-bottom: 18px;
+  padding: 10px 13px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-1);
+  background: oklch(0.67 0.19 165 / 0.08);
+  border: 1px solid oklch(0.67 0.19 165 / 0.3);
+}
+.login-hint code {
+  font-family: var(--font-jetbrains-mono, monospace);
+  font-size: 13px;
+  padding: 1px 7px;
+  border-radius: 5px;
+  color: var(--ink-0);
+  background: oklch(1 0 0 / 0.1);
+  border: 1px solid oklch(1 0 0 / 0.14);
+}
+
+/* CRM section: one window-height column, so its cards scroll inside themselves.
+   On a short window it keeps a usable minimum and the page scrolls instead. */
+.crm-column {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 64px - 28px - var(--demo-banner-h, 0px));
+  min-height: 700px;
+}
+@media (max-width: 767px) { .crm-column { height: calc(100dvh - 56px - 28px - var(--demo-banner-h, 0px)); } }

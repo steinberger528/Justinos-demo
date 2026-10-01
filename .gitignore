@@ -1,0 +1,23 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
+
+# env files: the demo needs none, and none should ever be committed
+.env*
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# local tooling
+.vercel
+.claude/
+.playwright-cli/
