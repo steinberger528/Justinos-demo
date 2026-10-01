@@ -42,8 +42,8 @@ export function DemoBanner() {
       <span className="demo-pill">Demo</span>
       <span className="demo-banner-text">
         {persists
-          ? 'Sample data only. Nothing here is real, and anything you change stays in this browser.'
-          : 'Sample data only. Nothing here is real. This browser blocks storage, so your changes last until you reload.'}
+          ? 'Sample data only. The tasks, courses and clients are invented, and anything you change stays in this browser.'
+          : 'Sample data only. The tasks, courses and clients are invented. This browser blocks storage, so your changes last until you reload.'}
       </span>
       <span style={{ flex: 1 }} />
       <button type="button" onClick={reset} className="demo-banner-btn" title="Put the sample data back the way it started">

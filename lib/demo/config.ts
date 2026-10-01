@@ -2,14 +2,17 @@
 
 export const REPO_URL = 'https://github.com/steinberger528/Justinos-demo'
 
-/** The fictional operator the sample data belongs to. */
+/**
+ * The operator named in the greeting and the top rail. The first name and the city are
+ * the owner's own. Everything else in the sample data is invented.
+ */
 export const OPERATOR = {
-  firstName: 'Jordan',
-  initials: 'JA',
+  firstName: 'Justin',
+  initials: 'JS',
   /** Shown in the top rail. A fixed place, since the demo never asks for a visitor's location. */
-  location: 'Columbus, OH',
-  latitude: 39.9612,
-  longitude: -82.9988,
+  location: 'Tampa, FL',
+  latitude: 27.9506,
+  longitude: -82.4572,
 }
 
 // Voice notes and photos of handwriting both need a server in production: speech to

@@ -12,7 +12,6 @@ const TABS = [
   { label: 'CRM',     href: '/crm' },
   { label: 'School',  href: '/school' },
   { label: 'Journal', href: '/journal' },
-  { label: 'Health',  href: '/health' },
 ] as const
 
 // WMO weather codes (Open-Meteo `current_weather.weathercode`) collapsed to a short label.

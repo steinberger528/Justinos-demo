@@ -174,7 +174,7 @@ const WHAT_IS_REAL: [string, string][] = [
   ['Same as production', 'The cards and layouts on every tab are the production components, with personal details replaced.'],
   ['Replaced', 'The API and database run in your browser. Keyword rules stand in for the model that routes captures. Telegram replies appear on screen.'],
   ['Left out', 'Voice transcription, reading photos, embeddings, Google Calendar, the course feed and the vault itself.'],
-  ['Invented', 'Every name, number and date you see.'],
+  ['Invented', 'Every course, client, task, journal entry and number you see.'],
 ]
 
 function pendingCaptures(): number {

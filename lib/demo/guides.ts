@@ -72,10 +72,6 @@ export const GUIDES: Record<string, TabGuideEntry> = {
       'Click an idea to read the full note',
     ],
   },
-  '/health': {
-    title: 'Health',
-    body: 'Reserved for health tracking. The dedicated tab is not built yet. For now the health pieces live on Home: the Nutrition card, which syncs daily totals from a food log, and the Habit Tracker. The morning plan also offers a workout window each day and lets the operator accept or skip it.',
-  },
   '/settings': {
     title: 'Settings',
     body: 'The rules the morning plan is built around: when the day starts, how long meals, workouts and study blocks run, and which course gets attention first. Changes apply to the next plan.',

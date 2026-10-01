@@ -29,7 +29,6 @@ Every tab has a note at the top that says what the tab is for and lists a few th
 | CRM | The cockpit for a content agency I am building, where specialist agents do the drafting and research and a person reviews and approves. |
 | School | Everything with a due date across every course, with a countdown and a topic checklist for each exam. |
 | Journal | Raw ideas that get filed overnight, and one journal entry a day with a mood. |
-| Health | A placeholder. The health pieces that exist today live on Home. |
 
 The Settings page (the avatar in the top left) holds the rules the morning plan is built around.
 
@@ -113,13 +112,13 @@ There are 23 capability cards today. Two of the four planned agents are live.
 | Control Room | Reads the capability cards pushed from the notes vault | A capability list modeled on the real one. Token, cost and session numbers are invented. |
 | Control Room walkthrough | Does not exist. The other three sections are the production pages. | The "How it works" section, written for the demo |
 
-Every name, number and date in the demo is invented. The operator, the courses, the clients and the journal entries are all fictional.
+The greeting uses my first name and the top bar shows my city. Everything else in the demo is invented: the courses, the clients, the tasks, the journal entries and every number.
 
 Anything you change is saved in your own browser, and "Reset sample data" clears it. The only request that leaves the page is the weather lookup for the top bar.
 
 ## What is not in this repository
 
-The production backend is left out on purpose: the API routes, the capture pipeline, the planner, the agent prompts, the database migrations, the cron handlers and the notes vault. They hold real schedules and personal details, and they need keys and services that a public demo should not have. The Brain tab from the working app is also gone, because I do not use it.
+The production backend is left out on purpose: the API routes, the capture pipeline, the planner, the agent prompts, the database migrations, the cron handlers and the notes vault. They hold real schedules and personal details, and they need keys and services that a public demo should not have. The Brain and Health tabs from the working app are also gone. I do not use Brain, and Health has no page yet.
 
 ## How the demo works
 
