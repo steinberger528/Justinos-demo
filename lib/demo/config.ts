@@ -18,5 +18,11 @@ export const OPERATOR = {
 export const VOICE_CAPTURE_ENABLED: boolean = false
 export const PHOTO_CAPTURE_ENABLED: boolean = false
 
-export const VOICE_OFF_MESSAGE = 'Voice notes are transcribed on the server in production. That is switched off in this demo, so type it instead.'
+// Production opens the Briefing by itself once a morning, between 07:00 and 10:00,
+// because the dashboard is left open overnight. A demo visitor arrives cold, and a
+// modal over the first page they see would hide the note that explains the tab. The
+// Briefing button on the Session card still opens it.
+export const BRIEFING_AUTO_OPEN: boolean = false
+
+export const VOICE_OFF_MESSAGE ='Voice notes are transcribed on the server in production. That is switched off in this demo, so type it instead.'
 export const PHOTO_OFF_MESSAGE = 'Photos of handwriting are read by a vision model in production. That is switched off in this demo, so type it instead.'

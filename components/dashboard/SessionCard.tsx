@@ -8,7 +8,7 @@ import { notifyTasksChanged } from '@/lib/task-events'
 import { notifyGoalsChanged } from '@/lib/goal-events'
 import { BriefingModal } from './BriefingModal'
 import { useLiveLocationAndWeather } from './TopRail'
-import { OPERATOR } from '@/lib/demo/config'
+import { BRIEFING_AUTO_OPEN, OPERATOR } from '@/lib/demo/config'
 
 // ─── Greeting + time utils ─────────────────────────────────────────────────────
 
@@ -425,6 +425,7 @@ export function SessionCard() {
   // "any time past 7:00" so opening the dashboard fresh in the evening doesn't pop a
   // stale briefing, and guarded by a per-date localStorage flag so closing it sticks.
   useEffect(() => {
+    if (!BRIEFING_AUTO_OPEN) return
     function check() {
       const hour = new Date().getHours()
       if (hour < 7 || hour >= 10) return
